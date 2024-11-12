@@ -1,2 +1,10 @@
+<<<<<<< HEAD
 PORT=3000
+=======
+<<<<<<< HEAD
+PORT=3000
+=======
+PORT=3000
+>>>>>>> 81bc8fd (Initial commit)
+>>>>>>> 37461be (first)
 MESSAGE="Hello from the simple Node.js app!"
