@@ -1,10 +1,10 @@
+image: node:16
+
 pipelines:
-  branches:
-    develop:
-      - step:
-          name: Deploy to Desktop
-          script:
-            - echo "Starting deployment"
-            - git pull origin main
-            - npm install
-            - pm2 restart my-app || pm2 start app.js --name "my-app"
+  default:
+    - step:
+        name: Deploy
+        script:
+          - echo "Starting deployment"
+          - npm install
+          - pm2 restart my-app || pm2 start app.js --name "my-app"
