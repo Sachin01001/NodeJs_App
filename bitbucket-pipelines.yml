@@ -1,4 +1,4 @@
-image: node:16
+image: node:16  # Specifies the Node.js version to use
 
 pipelines:
   default:
@@ -6,5 +6,6 @@ pipelines:
         name: Deploy
         script:
           - echo "Starting deployment"
-          - npm install
-          - pm2 restart my-app || pm2 start app.js --name "my-app"
+          - npm install -g pm2  # Installs PM2 globally
+          - npm install  # Installs project dependencies
+          - pm2 restart my-app || pm2 start app.js --name "my-app"  # Restarts or starts the application with PM2
