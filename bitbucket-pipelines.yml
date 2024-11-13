@@ -8,4 +8,5 @@ pipelines:
           - echo "Starting deployment"
           - npm install -g pm2  # Installs PM2 globally
           - npm install  # Installs project dependencies
+          - ls -alh
           - pm2 restart my-app || pm2 start server.js --name "my-app"  # Restarts or starts the application with PM2
