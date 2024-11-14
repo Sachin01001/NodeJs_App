@@ -22,8 +22,9 @@ pipelines:
             - echo "Starting Build and Deploy Step"
             # Install dependencies
             - apt-get update
-            - apt-get install -y zip pm2
-            - npm install
+            - apt-get install -y zip  # Install zip to package application
+            - npm install -g pm2     # Install PM2 globally via npm
+            - npm install            # Install Node.js dependencies
 
             # Create a zip file of the application
             - zip -r application.zip .
@@ -58,4 +59,4 @@ pipelines:
             # Start application with PM2 on designated port
             - pm2 start /var/www/html/server.js --name "my-app" --watch --env production
             - pm2 save  # Saves the PM2 process list to restart on reboot
-            - pm2 startup
+            - pm2 startup  # Sets up PM2 to restart on system reboot
