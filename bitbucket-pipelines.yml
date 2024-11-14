@@ -57,6 +57,6 @@ pipelines:
                 FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
 
             # Start application with PM2 on designated port
-            - pm2 start /var/www/html/server.js --name "my-app" --watch --env production
+            - pm2 start -f /var/www/html/server.js --name "my-app" --watch --env production
             - pm2 save  # Saves the PM2 process list to restart on reboot
             - pm2 startup  # Sets up PM2 to restart on system reboot
