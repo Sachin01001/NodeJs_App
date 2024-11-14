@@ -14,33 +14,48 @@
 image: atlassian/default-image:2
 
 pipelines:
-  default:
-    - step:
-        script:
-          - apt-get update
-          - apt-get install -y zip
-          - zip -r application1.zip .
-          - pipe: atlassian/aws-code-deploy:0.2.5
-            variables:
-              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              APPLICATION_NAME: $APPLICATION_NAME
-              S3_BUCKET: $S3_BUCKET
-              COMMAND: 'upload'
-              ZIP_FILE: 'application1.zip'
-              VERSION_LABEL: 'my-app-1.0.0'
-          - pipe: atlassian/aws-code-deploy:0.2.5
-            variables:
-              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-              APPLICATION_NAME: $APPLICATION_NAME
-              DEPLOYMENT_GROUP: $DEPLOYMENT_GROUP
-              S3_BUCKET: $S3_BUCKET
-              COMMAND: 'deploy'
-              WAIT: 'true'
-              VERSION_LABEL: 'my-app-1.0.0'
-              IGNORE_APPLICATION_STOP_FAILURES: 'true'
-              FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
-              
+  branches:
+    main:
+      - step:
+          name: Build and Deploy to EC2
+          script:
+            - echo "Starting Build and Deploy Step"
+            # Install dependencies
+            - apt-get update
+            - apt-get install -y zip pm2
+            - npm install
+
+            # Create a zip file of the application
+            - zip -r application.zip .
+
+            # Upload to S3 for deployment
+            - pipe: atlassian/aws-code-deploy:0.2.5
+              variables:
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                APPLICATION_NAME: $APPLICATION_NAME
+                S3_BUCKET: $S3_BUCKET
+                COMMAND: 'upload'
+                ZIP_FILE: 'application.zip'
+                VERSION_LABEL: 'latest-version'
+
+            # Deploy application using CodeDeploy
+            - pipe: atlassian/aws-code-deploy:0.2.5
+              variables:
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                APPLICATION_NAME: $APPLICATION_NAME
+                DEPLOYMENT_GROUP: $DEPLOYMENT_GROUP
+                S3_BUCKET: $S3_BUCKET
+                COMMAND: 'deploy'
+                WAIT: 'true'
+                VERSION_LABEL: 'latest-version'
+                IGNORE_APPLICATION_STOP_FAILURES: 'true'
+                FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+
+            # Start application with PM2 on designated port
+            - pm2 start /var/www/html/server.js --name "my-app" --watch --env production
+            - pm2 save  # Saves the PM2 process list to restart on reboot
+            - pm2 startup
