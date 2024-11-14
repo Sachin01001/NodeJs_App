@@ -5,7 +5,7 @@ const app = express();
 
 // Use environment variables
 const PORT = process.env.PORT || 4000;
-const MESSAGE = process.env.MESSAGE || "Hello World!";
+const MESSAGE = process.env.MESSAGE || "Hello Worldd!";
 
 // Basic routegit
 app.get('/', (req, res) => {
