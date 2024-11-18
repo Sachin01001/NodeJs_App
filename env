@@ -1,5 +1,7 @@
 
-PORT=4000
 
+
+
+PORT=3000
 
 MESSAGE="Hello from the simple Node.js app!"
