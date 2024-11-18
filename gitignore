@@ -1,6 +1,2 @@
-node_modules
-.env
-<<<<<<< HEAD
-=======
-nodejs
->>>>>>> 37461be (first)
+/node_modules
+/nodejs
